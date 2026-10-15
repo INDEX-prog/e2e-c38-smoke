@@ -1,104 +1,50 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-export default function Footer(): JSX.Element {
+export default function Footer() {
   return (
-    <footer className="py-12 border-t border-muted-dark/30">
+    <footer className="bg-navy-900 text-white py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          <div className="sm:col-span-2 lg:col-span-1">
+        <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-                <svg 
-                  className="w-5 h-5 text-background" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 11 12 14 22 4" />
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
                 </svg>
               </div>
-              <span className="font-display font-bold text-lg text-foreground">
-                C38 Smoke
-              </span>
+              <span className="font-display font-bold text-lg">E2E Smoke</span>
             </Link>
-            <p className="text-sm text-muted max-w-xs">
-              Pre-launch smoke testing for startups. 
-              Test your payment flow before your first customer does.
+            <p className="text-navy-300 text-sm max-w-xs leading-relaxed">
+              Pre-launch smoke testing for founders. We test your first-customer flow so you ship with confidence.
             </p>
           </div>
           
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Product</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/#how-it-works" className="text-sm text-muted hover:text-foreground transition-colors">
-                  How it Works
-                </Link>
-              </li>
-              <li>
-                <Link href="/pricing" className="text-sm text-muted hover:text-foreground transition-colors">
-                  Pricing
-                </Link>
-              </li>
-              <li>
-                <Link href="/intake" className="text-sm text-muted hover:text-foreground transition-colors">
-                  Start a Test
-                </Link>
-              </li>
+            <h4 className="font-semibold mb-4">Product</h4>
+            <ul className="space-y-2 text-sm text-navy-300">
+              <li><Link href="#how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
+              <li><Link href="#pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+              <li><Link href="#get-started" className="hover:text-white transition-colors">Get Started</Link></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Resources</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/dashboard" className="text-sm text-muted hover:text-foreground transition-colors">
-                  Dashboard
-                </Link>
-              </li>
-              <li>
-                <Link href="/results/sample" className="text-sm text-muted hover:text-foreground transition-colors">
-                  Sample Report
-                </Link>
-              </li>
-            </ul>
-          </div>
-          
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Links</h4>
-            <ul className="space-y-2">
-              <li>
-                <a 
-                  href="https://github.com/INDEX-prog/e2e-c38-smoke" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted hover:text-foreground transition-colors"
-                >
-                  GitHub
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="https://e2e-c38-smoke.vercel.app" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted hover:text-foreground transition-colors"
-                >
-                  Vercel
-                </a>
-              </li>
+            <h4 className="font-semibold mb-4">Resources</h4>
+            <ul className="space-y-2 text-sm text-navy-300">
+              <li><Link href="https://github.com/INDEX-prog/e2e-c38-smoke" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">GitHub</Link></li>
+              <li><Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link></li>
             </ul>
           </div>
         </div>
         
-        <div className="pt-8 border-t border-muted-dark/30 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted">
-            © {new Date().getFullYear()} E2E C38 Smoke. All rights reserved.
+        <div className="border-t border-navy-700 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-navy-400 text-sm">
+            © {new Date().getFullYear()} E2E Smoke Test. All rights reserved.
           </p>
-          <p className="text-sm text-muted">
-            Built for founders who ship.
-          </p>
+          <div className="flex items-center gap-6 text-sm text-navy-400">
+            <span>Test card: 4242 4242 4242 4242</span>
+          </div>
         </div>
       </div>
     </footer>

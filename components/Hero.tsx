@@ -1,67 +1,84 @@
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 
-export default function Hero(): JSX.Element {
+export default function Hero() {
   return (
-    <section className="min-h-screen pt-16 flex items-center">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+    <section className="pt-24 pb-16 lg:pt-28 lg:pb-20 bg-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div className="order-2 lg:order-1">
-            <p className="text-accent font-semibold text-sm tracking-wide uppercase mb-4">
-              Pre-Launch Testing
-            </p>
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
-              Your payment flow{" "}
-              <span className="text-accent">will break</span> on launch day
+          <div className="max-w-xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-navy-50 rounded-full mb-6">
+              <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+              <span className="text-sm font-medium text-navy-700">Pre-launch panic button</span>
+            </div>
+            
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-navy-900 leading-[1.1] tracking-tight mb-6">
+              Your payment flow will break on launch day.
             </h1>
-            <p className="text-muted text-lg leading-relaxed mb-8 max-w-[50ch]">
-              Unless you test it like your first real customer would. 
-              5-minute smoke test catches issues before they cost you sales.
+            
+            <p className="text-lg text-muted leading-relaxed mb-8 max-w-[50ch]">
+              Test it like your first real customer would. 5-minute smoke test, $99, catches 90% of issues before they happen.
             </p>
+            
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/intake" className="btn-primary text-center">
-                Run Your First Test — $99
+              <Link href="#get-started" className="btn-primary text-lg px-8 py-4">
+                Run Smoke Test — $99
               </Link>
-              <Link href="/#how-it-works" className="btn-secondary text-center">
+              <Link href="#how-it-works" className="btn-secondary text-lg px-8 py-4">
                 See How It Works
               </Link>
             </div>
-            <div className="mt-8 flex items-center gap-6 text-sm text-muted">
+            
+            <div className="mt-10 flex items-center gap-6 text-sm text-muted">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F26419" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
                 </svg>
-                <span>5 minutes</span>
+                <span>5 min test</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F26419" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
                 </svg>
-                <span>90% issue detection</span>
+                <span>Results in 24h</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F26419" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                  <line x1="1" y1="10" x2="23" y2="10" />
+                </svg>
+                <span>One-time $99</span>
               </div>
             </div>
           </div>
-          <div className="order-1 lg:order-2 relative">
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-muted-dark/50">
+          
+          <div className="relative">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-navy-900/10">
               <Image
-                src="https://picsum.photos/seed/smoke-test-dashboard/800/600"
-                alt="Smoke test results dashboard"
-                fill
-                className="object-cover"
+                src="https://picsum.photos/seed/smoke-test-dashboard/640/480"
+                alt="E2E Smoke Test Dashboard showing test results"
+                width={640}
+                height={480}
+                className="w-full h-auto"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6">
-                <div className="bg-surface/95 backdrop-blur border border-muted-dark/50 rounded-lg p-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-3 h-3 bg-green-500 rounded-full" />
-                    <span className="text-sm font-medium text-foreground">All tests passed</span>
-                  </div>
-                  <p className="text-xs text-muted">Payment flow verified in 4m 32s</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-900/20 to-transparent" />
+            </div>
+            <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg p-4 border border-navy-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-semibold text-navy-900 text-sm">Payment flow verified</p>
+                  <p className="text-xs text-muted">All 5 steps passed</p>
                 </div>
               </div>
             </div>
-            <div className="absolute -z-10 -top-4 -right-4 w-full h-full bg-accent/10 rounded-2xl" />
           </div>
         </div>
       </div>

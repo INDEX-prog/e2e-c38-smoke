@@ -3,56 +3,40 @@
 @tailwind utilities;
 
 :root {
-  --background: #0A1628;
-  --foreground: #F8FAFC;
-  --accent: #D4AF37;
-  --accent-hover: #E5C356;
-  --muted: #94A3B8;
-  --muted-dark: #475569;
-  --surface: #0F1D32;
-  --surface-light: #162339;
+  --background: #FFFFFF;
+  --foreground: #0A1628;
+  --accent: #F26419;
+  --muted: #5B6573;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-manrope), system-ui, sans-serif;
+  background: var(--background);
+  font-family: var(--font-manrope), sans-serif;
 }
 
 @layer base {
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-manrope), system-ui, sans-serif;
-    letter-spacing: -0.025em;
+    font-family: var(--font-manrope), sans-serif;
     font-weight: 700;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-accent text-background font-semibold px-6 py-3 rounded-lg hover:bg-accent-hover transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background;
+    @apply inline-flex items-center justify-center px-6 py-3 bg-accent text-white font-semibold rounded-lg transition-all duration-200 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
   }
   
   .btn-secondary {
-    @apply border border-muted-dark text-foreground font-medium px-6 py-3 rounded-lg hover:border-accent hover:text-accent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background;
+    @apply inline-flex items-center justify-center px-6 py-3 border-2 border-navy-900 text-navy-900 font-semibold rounded-lg transition-all duration-200 hover:bg-navy-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-navy-900 focus:ring-offset-2;
   }
   
-  .input-field {
-    @apply w-full bg-surface border border-muted-dark rounded-lg px-4 py-3 text-foreground placeholder:text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors;
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24;
   }
-  
-  .card {
-    @apply bg-surface border border-muted-dark rounded-xl p-6;
-  }
-}
-
-/* Skeleton loading animation */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-light) 50%, var(--surface) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
 }

@@ -1,204 +1,235 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, FormEvent } from 'react';
 
-type FormStatus = "idle" | "loading" | "error" | "success";
+type PricingTier = 'single' | 'bundle';
 
 interface FormData {
-  business_type: string;
-  intake_url: string;
-  pain_point: string;
-  email: string;
+  businessType: string;
+  intakeUrl: string;
+  painPoint: string;
+  tier: PricingTier;
 }
 
-interface IntakeFormProps {
-  priceType?: "single" | "bundle";
+interface FormErrors {
+  businessType?: string;
+  intakeUrl?: string;
+  painPoint?: string;
 }
 
-export default function IntakeForm({ priceType = "single" }: IntakeFormProps): JSX.Element {
-  const router = useRouter();
-  const [status, setStatus] = useState<FormStatus>("idle");
-  const [error, setError] = useState<string>("");
+export default function IntakeForm() {
   const [formData, setFormData] = useState<FormData>({
-    business_type: "",
-    intake_url: "",
-    pain_point: "",
-    email: "",
+    businessType: '',
+    intakeUrl: '',
+    painPoint: '',
+    tier: 'single',
   });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    
+    if (!formData.businessType.trim()) {
+      newErrors.businessType = 'Please select a business type';
+    }
+    
+    if (!formData.intakeUrl.trim()) {
+      newErrors.intakeUrl = 'Please enter your website URL';
+    } else {
+      try {
+        new URL(formData.intakeUrl.startsWith('http') ? formData.intakeUrl : `https://${formData.intakeUrl}`);
+      } catch {
+        newErrors.intakeUrl = 'Please enter a valid URL';
+      }
+    }
+    
+    if (!formData.painPoint.trim()) {
+      newErrors.painPoint = 'Please describe what you want tested';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus("loading");
-    setError("");
-
+    setSubmitError(null);
+    
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    
     try {
-      // First, save the submission
-      const submitResponse = await fetch("/api/data", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
-      if (!submitResponse.ok) {
-        throw new Error("Failed to save submission");
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
       }
-
-      const { id } = await submitResponse.json();
-
-      // Then create Stripe checkout session
-      const checkoutResponse = await fetch("/api/create-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          priceType,
-          submissionId: id,
-          email: formData.email,
-        }),
-      });
-
-      if (!checkoutResponse.ok) {
-        throw new Error("Failed to create checkout session");
-      }
-
-      const { url } = await checkoutResponse.json();
-
-      if (url) {
-        setStatus("success");
-        window.location.href = url;
-      } else {
-        // Fallback for development without Stripe keys
-        router.push(`/success?submission_id=${id}&demo=true`);
+      
+      if (data.url) {
+        window.location.href = data.url;
       }
     } catch (err) {
-      setStatus("error");
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setSubmitError(err instanceof Error ? err.message : 'Failed to create checkout session');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ): void => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const price = priceType === "single" ? "$99" : "$299";
-  const productName = priceType === "single" ? "Single Smoke Test" : "5-Test Bundle";
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-          Your email
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="founder@yourcompany.com"
-          className="input-field"
-          disabled={status === "loading"}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="business_type" className="block text-sm font-medium text-foreground mb-2">
-          Business type
-        </label>
-        <select
-          id="business_type"
-          name="business_type"
-          required
-          value={formData.business_type}
-          onChange={handleChange}
-          className="input-field"
-          disabled={status === "loading"}
-        >
-          <option value="">Select your business type</option>
-          <option value="saas">SaaS / Software</option>
-          <option value="ecommerce">E-commerce</option>
-          <option value="marketplace">Marketplace</option>
-          <option value="subscription">Subscription Service</option>
-          <option value="b2b">B2B Service</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor="intake_url" className="block text-sm font-medium text-foreground mb-2">
-          Your intake/landing URL
-        </label>
-        <input
-          type="url"
-          id="intake_url"
-          name="intake_url"
-          required
-          value={formData.intake_url}
-          onChange={handleChange}
-          placeholder="https://yourproduct.com/signup"
-          className="input-field"
-          disabled={status === "loading"}
-        />
-        <p className="mt-1 text-xs text-muted">
-          The URL where new customers start their journey
-        </p>
-      </div>
-
-      <div>
-        <label htmlFor="pain_point" className="block text-sm font-medium text-foreground mb-2">
-          What are you worried about?
-        </label>
-        <textarea
-          id="pain_point"
-          name="pain_point"
-          required
-          value={formData.pain_point}
-          onChange={handleChange}
-          placeholder="e.g., Payment flow on mobile, signup confirmation emails, checkout redirects..."
-          rows={3}
-          className="input-field resize-none"
-          disabled={status === "loading"}
-        />
-      </div>
-
-      {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-          <p className="text-sm text-red-400">{error}</p>
+    <section id="get-started" className="section-padding bg-navy-50">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-10">
+          <h2 className="font-display text-3xl sm:text-4xl font-bold text-navy-900 mb-4">
+            Start your smoke test
+          </h2>
+          <p className="text-lg text-muted">
+            Fill in 3 fields. We handle the rest.
+          </p>
         </div>
-      )}
 
-      <button
-        type="submit"
-        disabled={status === "loading"}
-        className="btn-primary w-full flex items-center justify-center gap-2"
-      >
-        {status === "loading" ? (
-          <>
-            <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-            Processing...
-          </>
-        ) : (
-          <>
-            Pay {price} for {productName}
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </>
-        )}
-      </button>
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 shadow-lg border border-navy-100">
+          {/* Tier Selection */}
+          <div className="mb-8">
+            <label className="block text-sm font-semibold text-navy-900 mb-3">
+              Select your package
+            </label>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, tier: 'single' })}
+                className={`p-4 rounded-xl border-2 text-left transition-all ${
+                  formData.tier === 'single'
+                    ? 'border-accent bg-orange-50'
+                    : 'border-navy-100 hover:border-navy-200'
+                }`}
+              >
+                <div className="font-semibold text-navy-900">Single Test</div>
+                <div className="text-2xl font-bold text-navy-900 mt-1">$99</div>
+                <div className="text-sm text-muted mt-1">One-time</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, tier: 'bundle' })}
+                className={`p-4 rounded-xl border-2 text-left transition-all relative ${
+                  formData.tier === 'bundle'
+                    ? 'border-accent bg-orange-50'
+                    : 'border-navy-100 hover:border-navy-200'
+                }`}
+              >
+                <div className="absolute top-2 right-2 bg-accent text-white text-xs font-bold px-2 py-0.5 rounded">
+                  SAVE $196
+                </div>
+                <div className="font-semibold text-navy-900">5-Test Bundle</div>
+                <div className="text-2xl font-bold text-navy-900 mt-1">$299</div>
+                <div className="text-sm text-muted mt-1">$60/test</div>
+              </button>
+            </div>
+          </div>
 
-      <p className="text-xs text-center text-muted">
-        Secure payment via Stripe. Results delivered within 24 hours.
-      </p>
-    </form>
+          {/* Business Type */}
+          <div className="mb-6">
+            <label htmlFor="businessType" className="block text-sm font-semibold text-navy-900 mb-2">
+              Business type
+            </label>
+            <select
+              id="businessType"
+              value={formData.businessType}
+              onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
+              className={`w-full px-4 py-3 rounded-xl border-2 bg-white text-navy-900 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all ${
+                errors.businessType ? 'border-red-400' : 'border-navy-100'
+              }`}
+            >
+              <option value="">Select your business type</option>
+              <option value="saas">SaaS / Software</option>
+              <option value="ecommerce">E-commerce</option>
+              <option value="marketplace">Marketplace</option>
+              <option value="subscription">Subscription Service</option>
+              <option value="agency">Agency / Services</option>
+              <option value="other">Other</option>
+            </select>
+            {errors.businessType && (
+              <p className="mt-2 text-sm text-red-500">{errors.businessType}</p>
+            )}
+          </div>
+
+          {/* Intake URL */}
+          <div className="mb-6">
+            <label htmlFor="intakeUrl" className="block text-sm font-semibold text-navy-900 mb-2">
+              Website URL to test
+            </label>
+            <input
+              type="text"
+              id="intakeUrl"
+              value={formData.intakeUrl}
+              onChange={(e) => setFormData({ ...formData, intakeUrl: e.target.value })}
+              placeholder="https://your-app.com"
+              className={`w-full px-4 py-3 rounded-xl border-2 bg-white text-navy-900 placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all ${
+                errors.intakeUrl ? 'border-red-400' : 'border-navy-100'
+              }`}
+            />
+            {errors.intakeUrl && (
+              <p className="mt-2 text-sm text-red-500">{errors.intakeUrl}</p>
+            )}
+          </div>
+
+          {/* Pain Point */}
+          <div className="mb-8">
+            <label htmlFor="painPoint" className="block text-sm font-semibold text-navy-900 mb-2">
+              What should we focus on?
+            </label>
+            <textarea
+              id="painPoint"
+              value={formData.painPoint}
+              onChange={(e) => setFormData({ ...formData, painPoint: e.target.value })}
+              placeholder="E.g., 'Test the signup to first payment flow' or 'Verify our onboarding completes correctly'"
+              rows={3}
+              className={`w-full px-4 py-3 rounded-xl border-2 bg-white text-navy-900 placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all resize-none ${
+                errors.painPoint ? 'border-red-400' : 'border-navy-100'
+              }`}
+            />
+            {errors.painPoint && (
+              <p className="mt-2 text-sm text-red-500">{errors.painPoint}</p>
+            )}
+          </div>
+
+          {submitError && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+              {submitError}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn-primary w-full justify-center text-lg py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Processing...
+              </span>
+            ) : (
+              `Continue to Checkout — ${formData.tier === 'single' ? '$99' : '$299'}`
+            )}
+          </button>
+
+          <p className="text-center text-sm text-muted mt-4">
+            Secure checkout powered by Stripe. Test mode: 4242 4242 4242 4242
+          </p>
+        </form>
+      </div>
+    </section>
   );
 }
