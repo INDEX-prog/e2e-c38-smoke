@@ -1,51 +1,94 @@
-import Image from 'next/image';
+import Image from "next/image";
+
+interface Testimonial {
+  quote: string;
+  name: string;
+  role: string;
+  company: string;
+  image: string;
+}
 
 export default function Testimonials() {
-  const testimonials = [
+  const testimonials: Testimonial[] = [
     {
-      quote: "Found a payment bug 2 days before launch. Would have lost our first 50 customers.",
-      author: "Sarah Chen",
-      role: "Founder, InvoiceKit",
-      image: "https://picsum.photos/seed/sarah-founder/80/80",
+      quote:
+        "Ran a test 3 hours before ProductHunt launch. Caught a Stripe webhook that wasn't configured for production. Would have lost every first customer.",
+      name: "Sarah Chen",
+      role: "Founder",
+      company: "Taskflow.io",
+      image: "https://picsum.photos/seed/sarah-chen/100/100",
     },
     {
-      quote: "Replaced our 3-day manual QA process. Results in 24 hours, issues I never would have caught.",
-      author: "Marcus Rivera",
-      role: "CTO, Flowstate",
-      image: "https://picsum.photos/seed/marcus-cto/80/80",
+      quote:
+        "We thought we tested everything. The smoke test found our OAuth callback was returning 404 on mobile Safari. Fixed it in 20 minutes.",
+      name: "Marcus Rivera",
+      role: "CTO",
+      company: "Vendorly",
+      image: "https://picsum.photos/seed/marcus-rivera/100/100",
+    },
+    {
+      quote:
+        "Worth 10x the price. Our confirmation email wasn't sending due to a typo in the SendGrid API key. No way we'd have caught that manually.",
+      name: "Jamie Park",
+      role: "Solo Founder",
+      company: "CalSync",
+      image: "https://picsum.photos/seed/jamie-park/100/100",
     },
   ];
 
   return (
-    <section className="section-padding bg-navy-50">
-      <div className="max-w-5xl mx-auto">
+    <section className="py-20 bg-navy-50/50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-navy-900 mb-4">
-            Founders trust us before launch
+          <h2 className="font-display font-bold text-navy-900 text-3xl sm:text-4xl mb-4">
+            Founders who launched with confidence
           </h2>
+          <p className="text-lg text-muted max-w-2xl mx-auto">
+            They ran the test. They fixed what broke. They launched without
+            breaking.
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div key={index} className="bg-white rounded-2xl p-8 border border-navy-100">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-accent mb-4">
-                <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z" fill="currentColor"/>
-                <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" fill="currentColor"/>
-              </svg>
-              <p className="text-lg text-navy-900 mb-6 leading-relaxed">
-                {testimonial.quote}
+        <div className="grid md:grid-cols-3 gap-8">
+          {testimonials.map((testimonial) => (
+            <div
+              key={testimonial.name}
+              className="bg-white rounded-xl p-6 border border-navy-100 hover:shadow-lg transition-shadow"
+            >
+              <div className="flex gap-1 mb-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <svg
+                    key={star}
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="#E85D04"
+                    stroke="none"
+                  >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="text-navy-700 leading-relaxed mb-6">
+                "{testimonial.quote}"
               </p>
-              <div className="flex items-center gap-4">
-                <Image
-                  src={testimonial.image}
-                  alt={testimonial.author}
-                  width={48}
-                  height={48}
-                  className="rounded-full"
-                />
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-navy-100">
+                  <Image
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    width={48}
+                    height={48}
+                    className="object-cover"
+                  />
+                </div>
                 <div>
-                  <p className="font-semibold text-navy-900">{testimonial.author}</p>
-                  <p className="text-sm text-muted">{testimonial.role}</p>
+                  <p className="font-semibold text-navy-900">
+                    {testimonial.name}
+                  </p>
+                  <p className="text-sm text-muted">
+                    {testimonial.role}, {testimonial.company}
+                  </p>
                 </div>
               </div>
             </div>

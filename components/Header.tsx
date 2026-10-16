@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState } from "react";
+import Link from "next/link";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -11,43 +11,65 @@ export default function Header() {
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 11 12 14 22 4" />
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            <div className="w-8 h-8 bg-navy-900 rounded flex items-center justify-center">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#E85D04"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
               </svg>
             </div>
-            <span className="font-display font-bold text-navy-900 text-lg">E2E Smoke</span>
+            <span className="font-display font-bold text-navy-900 text-lg">
+              _E2E_C38
+            </span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
-            <Link href="#how-it-works" className="text-muted hover:text-navy-900 transition-colors font-medium">
+            <Link
+              href="/#how-it-works"
+              className="text-navy-700 hover:text-navy-900 font-medium text-sm transition-colors"
+            >
               How It Works
             </Link>
-            <Link href="#pricing" className="text-muted hover:text-navy-900 transition-colors font-medium">
+            <Link
+              href="/pricing"
+              className="text-navy-700 hover:text-navy-900 font-medium text-sm transition-colors"
+            >
               Pricing
             </Link>
-            <Link href="#get-started" className="btn-primary">
-              Start Test — $99
+            <Link
+              href="/dashboard"
+              className="text-navy-700 hover:text-navy-900 font-medium text-sm transition-colors"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/pricing"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-accent text-white font-semibold text-sm rounded-lg hover:bg-orange-600 transition-colors"
+            >
+              Get Started — $99
             </Link>
           </div>
 
           <button
             type="button"
-            className="md:hidden p-2 text-navy-900"
+            className="md:hidden p-2 text-navy-700"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M6 6l12 12M6 18L18 6" />
               </svg>
             ) : (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             )}
           </button>
@@ -57,21 +79,32 @@ export default function Header() {
           <div className="md:hidden py-4 border-t border-navy-100">
             <div className="flex flex-col gap-4">
               <Link
-                href="#how-it-works"
-                className="text-muted hover:text-navy-900 transition-colors font-medium py-2"
+                href="/#how-it-works"
+                className="text-navy-700 hover:text-navy-900 font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 How It Works
               </Link>
               <Link
-                href="#pricing"
-                className="text-muted hover:text-navy-900 transition-colors font-medium py-2"
+                href="/pricing"
+                className="text-navy-700 hover:text-navy-900 font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Pricing
               </Link>
-              <Link href="#get-started" className="btn-primary text-center" onClick={() => setMobileMenuOpen(false)}>
-                Start Test — $99
+              <Link
+                href="/dashboard"
+                className="text-navy-700 hover:text-navy-900 font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/pricing"
+                className="inline-flex items-center justify-center px-5 py-2.5 bg-accent text-white font-semibold rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Get Started — $99
               </Link>
             </div>
           </div>

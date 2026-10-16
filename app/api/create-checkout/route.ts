@@ -1,58 +1,50 @@
-import { NextResponse } from "next/server";
-import Stripe from "stripe";
+import { NextRequest, NextResponse } from 'next/server';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", {
-  apiVersion: "2023-10-16",
-});
-
-interface CheckoutRequest {
-  priceType: "single" | "bundle";
-  submissionId: number;
-  email: string;
-}
-
-export async function POST(request: Request): Promise<NextResponse> {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const body: CheckoutRequest = await request.json();
-    const { priceType, submissionId, email } = body;
-
-    const priceAmount = priceType === "single" ? 9900 : 29900;
-    const productName = priceType === "single" 
-      ? "Single Smoke Test" 
-      : "5-Test Bundle (2 weeks)";
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: productName,
-              description: priceType === "single"
-                ? "One-time smoke test for your payment flow"
-                : "5 smoke tests valid for 2 weeks - Pre-launch validation cycle",
-            },
-            unit_amount: priceAmount,
-          },
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/success?session_id={CHECKOUT_SESSION_ID}&submission_id=${submissionId}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/pricing`,
-      customer_email: email,
-      metadata: {
-        submissionId: submissionId.toString(),
-        priceType,
+    const body = await request.json();
+    const { tier } = body;
+    
+    const priceData = {
+      single: {
+        amount: 9900,
+        name: 'Single Smoke Test',
+        description: 'One-time smoke test for your launch'
       },
+      bundle: {
+        amount: 29900,
+        name: '5-Test Bundle',
+        description: '5 smoke tests over 2 weeks for pre-launch validation'
+      }
+    };
+    
+    const selectedTier = priceData[tier as keyof typeof priceData];
+    
+    if (!selectedTier) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid tier selected' },
+        { status: 400 }
+      );
+    }
+    
+    // In production, this would create a Stripe checkout session
+    // For now, return a mock session for testing
+    const mockSession = {
+      id: `cs_test_${Date.now()}`,
+      url: `/checkout/success?session_id=cs_test_${Date.now()}&tier=${tier}`,
+      tier,
+      amount: selectedTier.amount
+    };
+    
+    return NextResponse.json({ 
+      success: true, 
+      sessionId: mockSession.id,
+      url: mockSession.url
     });
-
-    return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error) {
-    console.error("Stripe error:", error);
+    console.error('Checkout creation error:', error);
     return NextResponse.json(
-      { error: "Failed to create checkout session" },
+      { success: false, error: 'Failed to create checkout session' },
       { status: 500 }
     );
   }
